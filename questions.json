@@ -1263,9 +1263,130 @@
 "Percentages": {
   "round1": [
     {
-      "question":"..."
+      "question": "What is 25% of 200?",
+      "options": ["25", "50", "75", "100"],
+      "answer": "50",
+      "explanation": "25% means 25/100. (25/100) × 200 = 50."
+    },
+    {
+      "question": "50% of 80 is:",
+      "options": ["20", "30", "40", "50"],
+      "answer": "40",
+      "explanation": "50% means half. Half of 80 is 40."
+    },
+    {
+      "question": "10% of 450 is:",
+      "options": ["40", "45", "50", "55"],
+      "answer": "45",
+      "explanation": "10% of 450 = 450 × 10/100 = 45."
+    },
+    {
+      "question": "What percentage of 100 is 30?",
+      "options": ["20%", "25%", "30%", "35%"],
+      "answer": "30%",
+      "explanation": "(30/100) × 100 = 30%."
+    },
+    {
+      "question": "75% of 400 is:",
+      "options": ["250", "275", "300", "325"],
+      "answer": "300",
+      "explanation": "75% of 400 = (75/100) × 400 = 300."
+    },
+    {
+      "question": "20% of 150 is:",
+      "options": ["20", "25", "30", "35"],
+      "answer": "30",
+      "explanation": "20% of 150 = (20/100) × 150 = 30."
+    },
+    {
+      "question": "What is 5% of 600?",
+      "options": ["20", "25", "30", "35"],
+      "answer": "30",
+      "explanation": "5% of 600 = (5/100) × 600 = 30."
+    },
+    {
+      "question": "40 is what percent of 200?",
+      "options": ["10%", "15%", "20%", "25%"],
+      "answer": "20%",
+      "explanation": "(40/200) × 100 = 20%."
+    },
+    {
+      "question": "What is 15% of 200?",
+      "options": ["20", "25", "30", "35"],
+      "answer": "30",
+      "explanation": "15% of 200 = (15/100) × 200 = 30."
+    },
+    {
+      "question": "Which of the following is equal to 100%?",
+      "options": ["Half", "Whole", "Quarter", "Double"],
+      "answer": "Whole",
+      "explanation": "100% always represents the complete or whole quantity."
     }
-  ]
+  ],
+"round2": [
+  {
+    "question": "A shirt costs ₹800. A discount of 25% is offered. What is the discount amount?",
+    "options": ["₹150", "₹180", "₹200", "₹250"],
+    "answer": "₹200",
+    "explanation": "25% of ₹800 = (25/100) × 800 = ₹200."
+  },
+  {
+    "question": "Ravi scored 72 marks out of 90. What is his percentage?",
+    "options": ["75%", "80%", "85%", "90%"],
+    "answer": "80%",
+    "explanation": "(72/90) × 100 = 80%."
+  },
+  {
+    "question": "A salary of ₹40,000 is increased by 10%. What is the new salary?",
+    "options": ["₹42,000", "₹43,000", "₹44,000", "₹45,000"],
+    "answer": "₹44,000",
+    "explanation": "10% of ₹40,000 = ₹4,000. New salary = ₹44,000."
+  },
+  {
+    "question": "A town's population is 20,000. It increases by 15%. What is the new population?",
+    "options": ["22,000", "23,000", "24,000", "25,000"],
+    "answer": "23,000",
+    "explanation": "15% of 20,000 = 3,000. New population = 23,000."
+  },
+  {
+    "question": "A laptop worth ₹50,000 is sold with a 20% discount. What is the selling price?",
+    "options": ["₹38,000", "₹40,000", "₹42,000", "₹45,000"],
+    "answer": "₹40,000",
+    "explanation": "20% of ₹50,000 = ₹10,000. Selling price = ₹40,000."
+  },
+  {
+    "question": "A student answered 45 out of 60 questions correctly. What percentage did the student score?",
+    "options": ["70%", "72%", "75%", "80%"],
+    "answer": "75%",
+    "explanation": "(45/60) × 100 = 75%."
+  },
+  {
+    "question": "The price of a bag is increased from ₹500 to ₹600. What is the percentage increase?",
+    "options": ["15%", "18%", "20%", "25%"],
+    "answer": "20%",
+    "explanation": "Increase = ₹100. (100/500) × 100 = 20%."
+  },
+  {
+    "question": "A mobile phone price decreases from ₹20,000 to ₹18,000. What is the percentage decrease?",
+    "options": ["8%", "10%", "12%", "15%"],
+    "answer": "10%",
+    "explanation": "Decrease = ₹2,000. (2000/20000) × 100 = 10%."
+  },
+  {
+    "question": "Out of 250 employees, 50 are women. What percentage are women?",
+    "options": ["15%", "18%", "20%", "25%"],
+    "answer": "20%",
+    "explanation": "(50/250) × 100 = 20%."
+  },
+  {
+    "question": "An exam has 200 marks. A student scores 170 marks. What percentage did the student obtain?",
+    "options": ["80%", "82%", "85%", "90%"],
+    "answer": "85%",
+    "explanation": "(170/200) × 100 = 85%."
+  }
+],
+
+
 }
 
 }

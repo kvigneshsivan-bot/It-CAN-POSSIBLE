@@ -5,165 +5,407 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrainBoost Certificate</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
 
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
 }
 
 body{
-background:#f5f7fa;
-padding:30px;
+
+background:#eef2f7;
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
+padding:40px;
+font-family:'Poppins',sans-serif;
+
 }
 
 .certificate{
-width:1000px;
+
+width:1100px;
 max-width:100%;
 background:white;
+border:12px solid #0A1F44;
+border-radius:25px;
 padding:50px;
-border:10px solid #0A1F44;
-border-radius:20px;
-text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,.1);
+position:relative;
+box-shadow:0 20px 40px rgba(0,0,0,.18);
+
+}
+
+.certificate:before{
+
+content:"";
+position:absolute;
+top:15px;
+left:15px;
+right:15px;
+bottom:15px;
+border:3px solid #d4af37;
+border-radius:18px;
+
 }
 
 .logo{
-font-size:40px;
+
+font-size:48px;
 font-weight:bold;
 color:#FF6B00;
-margin-bottom:20px;
+font-family:'Cinzel',serif;
+text-align:center;
+margin-bottom:15px;
+
+}
+
+.subtitle{
+
+text-align:center;
+font-size:18px;
+letter-spacing:3px;
+color:#777;
+margin-bottom:15px;
+
 }
 
 .title{
-font-size:36px;
+
+font-size:42px;
+font-family:'Cinzel',serif;
+text-align:center;
 color:#0A1F44;
-margin-bottom:20px;
+margin-bottom:25px;
+
+}
+
+.award{
+
+text-align:center;
+font-size:22px;
+color:#444;
+margin-bottom:10px;
+
 }
 
 .name{
-font-size:32px;
+
+text-align:center;
+font-size:40px;
+font-family:'Cinzel',serif;
 font-weight:bold;
 color:#FF6B00;
-margin:20px 0;
+margin:25px 0;
+
 }
 
-.topic{
-font-size:24px;
-margin:15px 0;
+.description{
+
+text-align:center;
+font-size:20px;
+line-height:1.8;
+color:#444;
+padding:0 50px;
+
 }
 
-.date{
-margin-top:20px;
+.highlight{
+
+color:#0A1F44;
+font-weight:bold;
+
 }
 
-.signature{
-margin-top:50px;
+.score-box{
+
+margin:40px auto;
+width:220px;
+padding:18px;
+background:#0A1F44;
+color:white;
+border-radius:15px;
+text-align:center;
+
+}
+
+.score-box h2{
+
+font-size:38px;
+
+}
+
+.info{
+
 display:flex;
 justify-content:space-between;
+margin-top:40px;
+font-size:18px;
+
 }
 
-.btn{
-margin-top:30px;
-padding:12px 20px;
+.info div{
+
+text-align:center;
+flex:1;
+
+}
+
+.label{
+
+font-weight:bold;
+color:#0A1F44;
+margin-bottom:8px;
+
+}
+
+.signatures{
+
+display:flex;
+justify-content:space-between;
+margin-top:60px;
+
+}
+
+.sign{
+
+text-align:center;
+width:220px;
+
+}
+
+.line{
+
+border-top:2px solid #000;
+margin-bottom:8px;
+
+}
+
+.buttons{
+
+margin-top:45px;
+text-align:center;
+
+}
+
+button{
+
+padding:14px 28px;
+margin:10px;
 border:none;
-background:#FF6B00;
-color:white;
 border-radius:8px;
+font-size:16px;
 cursor:pointer;
+color:white;
+
 }
 
-.btn:hover{
-opacity:.9;
+#printBtn{
+
+background:#FF6B00;
+
+}
+
+#downloadBtn{
+
+background:#0A1F44;
+
+}
+
+@media print{
+
+body{
+
+background:white;
+padding:0;
+
+}
+
+.buttons{
+
+display:none;
+
+}
+
+.certificate{
+
+box-shadow:none;
+
+}
+
 }
 
 </style>
 </head>
 <body>
 
-<div class="certificate" id="certificate">
+<div class="certificate">
 
 <div class="logo">
 🧠 BrainBoost
 </div>
 
-<div class="title">
-Certificate of Completion
+<div class="subtitle">
+ONLINE APTITUDE LEARNING PLATFORM
 </div>
 
-<p>This certificate is proudly presented to</p>
+<div class="title">
+CERTIFICATE OF COMPLETION
+</div>
+
+<p class="award">
+This Certificate is Proudly Presented To
+</p>
 
 <div class="name" id="studentName">
 Student Name
 </div>
 
-<p>for successfully completing</p>
+<div class="description">
 
-<div class="topic" id="topicName">
+For successfully completing the
+
+<span class="highlight" id="topicName">
 Topic Name
+</span>
+
+course on <b>BrainBoost</b> with excellent dedication,
+consistent practice, and outstanding performance.
+
 </div>
 
-<p>with outstanding performance and dedication.</p>
+<div class="score-box">
 
-<div class="date" id="completionDate">
-Date
+<div>OVERALL ACCURACY</div>
+
+<h2 id="accuracy">
+0%
+</h2>
+
 </div>
 
-<div class="signature">
+<div class="info">
 
 <div>
-___________________
-<br>
-Trainer
+
+<div class="label">
+Certificate ID
+</div>
+
+<div id="certificateId">
+BB-000000
+</div>
+
 </div>
 
 <div>
-___________________
-<br>
+
+<div class="label">
+Completion Date
+</div>
+
+<div id="completionDate">
+00/00/0000
+</div>
+
+</div>
+
+<div>
+
+<div class="label">
+Platform
+</div>
+
+<div>
 BrainBoost
 </div>
 
 </div>
 
-<button class="btn" onclick="window.print()">
-🖨 Print Certificate
-</button>
+</div>
+
+
+
+</div>
+
+
 
 </div>
 
 <script>
 
 const user =
-JSON.parse(
-localStorage.getItem("brainboostUser")
-) || {};
+JSON.parse(localStorage.getItem("brainboostUser")) || {};
 
 const topic =
-localStorage.getItem("completedTopic")
-|| "Number System";
+localStorage.getItem("completedTopic") || "Number System";
 
-document.getElementById("studentName")
-.innerText =
+const progress =
+JSON.parse(localStorage.getItem("progress")) || {};
+
+const accuracy =
+progress[topic]?.accuracy || 0;
+
+// ======================
+// Student Name
+// ======================
+
+document.getElementById("studentName").innerText =
 user.name || "Student";
 
-document.getElementById("topicName")
-.innerText =
+// ======================
+// Topic Name
+// ======================
+
+document.getElementById("topicName").innerText =
 topic;
 
-document.getElementById("completionDate")
-.innerText =
-"Completed on : " +
-new Date().toLocaleDateString();
+// ======================
+// Accuracy
+// ======================
+
+document.getElementById("accuracy").innerText =
+accuracy + "%";
+
+// ======================
+// Completion Date
+// ======================
+
+const today = new Date();
+
+document.getElementById("completionDate").innerText =
+today.toLocaleDateString("en-GB");
+
+// ======================
+// Certificate ID
+// ======================
+
+const certificateId =
+"BB-" +
+today.getFullYear() +
+"-" +
+Math.floor(100000 + Math.random()*900000);
+
+document.getElementById("certificateId").innerText =
+certificateId;
+
+// ======================
+// Download PDF
+// ======================
+
+document.getElementById("downloadBtn").onclick = function(){
+
+window.print();
+
+};
 
 </script>
-<script src="js/app.js"></script>
 
+<script src="js/app.js"></script>
 
 </body>
 
