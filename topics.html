@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainBoost Topics</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f7fa;
+padding:20px;
+}
+
+h1{
+color:#0A1F44;
+margin-bottom:20px;
+}
+
+#searchTopic{
+width:100%;
+padding:12px;
+margin:15px 0;
+border:2px solid #ddd;
+border-radius:8px;
+font-size:16px;
+}
+
+.topic-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.topic-card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+transition:.3s;
+}
+
+.topic-card:hover{
+transform:translateY(-5px);
+}
+
+.topic-card h3{
+color:#0A1F44;
+margin-bottom:10px;
+}
+
+.progress{
+height:10px;
+background:#ddd;
+border-radius:20px;
+margin:10px 0;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+background:#FF6B00;
+}
+
+.btn{
+background:#0A1F44;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+width:100%;
+}
+
+.btn:hover{
+opacity:.9;
+}
+
+.completed{
+background:green;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>📚 Aptitude Topics</h1>
+
+<input
+type="text"
+id="searchTopic"
+placeholder="🔍 Search Topics...">
+
+<div class="topic-grid" id="topicGrid"></div>
+
+<script>
+
+const topics=[
+
+"Number System",
+"Simplification",
+"Percentages",
+"Ratio & Proportion",
+"Average",
+"Profit & Loss",
+"Simple Interest",
+"Compound Interest",
+"Time & Work",
+"Pipes & Cisterns",
+"Time, Speed & Distance",
+"Data Interpretation",
+"Blood Relations",
+"Direction Sense",
+"Coding-Decoding",
+"Seating Arrangement",
+"Analogy",
+"Series",
+"Syllogism",
+"Ranking & Order",
+"Vocabulary",
+"Error Spotting",
+"Reading Comprehension",
+"Para Jumbles"
+
+];
+
+const progress=
+JSON.parse(localStorage.getItem("progress")) || {};
+
+const topicGrid=
+document.getElementById("topicGrid");
+
+topics.forEach(topic=>{
+
+let currentRound=1;
+
+if(progress[topic]){
+
+currentRound=progress[topic].currentRound || 1;
+
+}
+
+let completedRounds=currentRound-1;
+
+if(completedRounds>10){
+
+completedRounds=10;
+
+}
+
+let percentage=(completedRounds/10)*100;
+
+let button="";
+
+if(completedRounds>=10){
+
+button=`
+<button
+class="btn completed"
+disabled>
+🏆 Completed
+</button>
+`;
+
+}
+else{
+
+button=`
+<button
+class="btn"
+onclick="startTopic('${topic}')">
+${completedRounds===0 ? "Start Learning" : "Continue Learning"}
+</button>
+`;
+
+}
+
+topicGrid.innerHTML+=`
+
+<div class="topic-card">
+
+<h3>${topic}</h3>
+
+<p>Progress : ${percentage}%</p>
+
+<div class="progress">
+
+<div
+class="progress-bar"
+style="width:${percentage}%">
+</div>
+
+</div>
+
+<p>Rounds : ${completedRounds} / 10</p>
+
+${button}
+
+</div>
+
+`;
+
+});
+
+function startTopic(topic){
+
+localStorage.setItem(
+"selectedTopic",
+topic
+);
+
+window.location.href="rounds.html";
+
+}
+
+document.getElementById("searchTopic")
+.addEventListener("keyup",function(){
+
+let value=this.value.toLowerCase();
+
+document.querySelectorAll(".topic-card")
+.forEach(card=>{
+
+let text=
+card.querySelector("h3")
+.innerText
+.toLowerCase();
+
+card.style.display=
+text.includes(value)
+? "block"
+: "none";
+
+});
+
+});
+
+</script>
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

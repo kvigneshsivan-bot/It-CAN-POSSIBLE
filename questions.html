@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainBoost Questions</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f7fa;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:3000px;
+height: 1000px;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.topic{
+color:#FF6B00;
+margin-bottom:10px;
+}
+
+.question-count{
+color:#666;
+margin-bottom:20px;
+}
+
+.question{
+font-size:22px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+.option{
+padding:15px;
+border:2px solid #ddd;
+border-radius:10px;
+margin-bottom:15px;
+cursor:pointer;
+transition:.3s;
+}
+
+.option:hover{
+background:#f3f3f3;
+}
+
+.selected{
+border-color:#FF6B00;
+background:#fff2e8;
+}
+
+.correct{
+background:#d4edda;
+border-color:green;
+}
+
+.wrong{
+background:#f8d7da;
+border-color:red;
+}
+
+.btn{
+background:#FF6B00;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.btn:hover{
+opacity:.9;
+}
+
+.result{
+margin-top:20px;
+padding:15px;
+border-radius:10px;
+display:none;
+}
+
+.explanation{
+margin-top:10px;
+color:#333;
+}
+
+.round-complete{
+display:none;
+text-align:center;
+}
+
+.round-complete h1{
+color:#0A1F44;
+margin-bottom:15px;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div id="quizBox">
+
+<h2 class="topic" id="topicName"></h2>
+
+<p class="question-count" id="questionCount"></p>
+
+<div class="question" id="question"></div>
+
+<div id="options"></div>
+
+<button
+class="btn"
+id="submitBtn"
+onclick="submitAnswer()">
+Submit Answer
+</button>
+
+<button
+class="btn"
+style="display:none"
+id="nextBtn"
+onclick="nextQuestion()">
+Next Question
+</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<div class="round-complete" id="completeBox">
+
+<h1>🎉 Round Completed</h1>
+
+<h2 id="scoreText"></h2>
+
+<p id="accuracyText"></p>
+
+<button class="btn"
+onclick="goTopics()">
+Back To Topics
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const topic =
+localStorage.getItem("selectedTopic") || "Number System";
+
+const round =
+localStorage.getItem("currentRound") || "round1";
+
+document.getElementById("topicName").innerText = topic;
+
+let questions = [];
+let currentQuestion = 0;
+let selectedAnswer = null;
+let score = 0;
+
+fetch("questions.json")
+.then(response => response.json())
+.then(data => {
+
+    console.log(data);
+
+   
+    questions = data[topic][round];
+
+    loadQuestion();
+
+})
+.catch(error => {
+
+    console.log(error);
+
+    document.getElementById("quizBox").innerHTML = `
+    <h2>Error Loading Questions</h2>
+    `;
+
+});
+
+function loadQuestion(){
+
+    document.getElementById("submitBtn").style.display = "inline-block";
+    document.getElementById("submitBtn").disabled = false;
+
+    document.getElementById("questionCount").innerText =
+    `Question ${currentQuestion + 1} of ${questions.length}`;
+
+    document.getElementById("question").innerText =
+    questions[currentQuestion].question;
+
+    const optionsDiv =
+    document.getElementById("options");
+
+    optionsDiv.innerHTML = "";
+
+    questions[currentQuestion].options.forEach(option => {
+
+        const div = document.createElement("div");
+
+        div.classList.add("option");
+
+        div.innerText = option;
+
+        div.onclick = () => selectOption(div, option);
+
+        optionsDiv.appendChild(div);
+
+    });
+
+    // Reset selected answer
+    selectedAnswer = null;
+
+    // Enable option clicking again
+    document.querySelectorAll(".option").forEach(opt => {
+        opt.style.pointerEvents = "auto";
+    });
+
+    // Hide result
+    document.getElementById("result").style.display = "none";
+
+    // Hide Next button
+    document.getElementById("nextBtn").style.display = "none";
+
+    // Show Submit button
+    document.getElementById("submitBtn").style.display = "inline-block";
+
+}
+
+function selectOption(div,option){
+
+document.querySelectorAll(".option")
+.forEach(opt => opt.classList.remove("selected"));
+
+div.classList.add("selected");
+
+selectedAnswer = option;
+
+}
+
+function submitAnswer(){
+
+    // Check if user selected an option
+    if(!selectedAnswer){
+
+        alert("Please select an option");
+        return;
+
+    }
+
+    const q = questions[currentQuestion];
+
+    const result =
+    document.getElementById("result");
+
+    // Disable Submit Button
+    document.getElementById("submitBtn").disabled = true;
+    document.getElementById("submitBtn").style.display = "none";
+
+    // Show Correct & Wrong Options
+    document.querySelectorAll(".option").forEach(opt=>{
+
+        if(opt.innerText === q.answer){
+
+            opt.classList.add("correct");
+
+        }
+
+        if(
+            opt.innerText === selectedAnswer &&
+            selectedAnswer !== q.answer
+        ){
+
+            opt.classList.add("wrong");
+
+        }
+
+        // Disable clicking options again
+        opt.style.pointerEvents = "none";
+
+    });
+
+    result.style.display = "block";
+
+    if(selectedAnswer === q.answer){
+
+        score++;
+
+        result.innerHTML = `
+        ✅ Correct
+        <div class="explanation">
+        ${q.explanation}
+        </div>
+        `;
+
+    }
+    else{
+
+        result.innerHTML = `
+        ❌ Wrong<br>
+        Correct Answer : ${q.answer}
+
+        <div class="explanation">
+        ${q.explanation}
+        </div>
+        `;
+
+    }
+
+    // Show Next Button
+    document.getElementById("nextBtn").style.display = "inline-block";
+
+}
+function nextQuestion(){
+
+    currentQuestion++;
+
+    if(currentQuestion < questions.length){
+
+        loadQuestion();
+
+    }else{
+
+        showResult();
+    }
+}
+
+function showResult(){
+
+    document.getElementById("quizBox")
+    .style.display = "none";
+
+    document.getElementById("completeBox")
+    .style.display = "block";
+
+    const accuracy =
+    ((score/questions.length)*100).toFixed(0);
+
+    document.getElementById("scoreText")
+    .innerText =
+    `Score : ${score}/${questions.length}`;
+let message="";
+
+if(accuracy>=90){
+
+message="🌟 Excellent Performance!";
+
+}
+else if(accuracy>=80){
+
+message="👏 Very Good!";
+
+}
+else if(accuracy>=60){
+
+message="👍 Good Attempt!";
+
+}
+else{
+
+message="📘 Keep Practicing!";
+
+}
+
+document.getElementById("accuracyText")
+.innerHTML=
+`
+Accuracy : ${accuracy}%<br><br>
+${message}
+`;
+
+    let progress =
+    JSON.parse(localStorage.getItem("progress")) || {};
+
+const nextRound =
+Number(round.replace("round","")) + 1;
+
+progress[topic] = {
+
+currentRound: nextRound,
+
+score: score,
+
+accuracy: accuracy
+
+};
+
+localStorage.setItem(
+"progress",
+JSON.stringify(progress)
+);
+
+
+if(nextRound > 10){
+
+    localStorage.setItem("completedTopic", topic);
+
+    if(accuracy >= 80){
+
+        alert("🏆 Congratulations! You completed this topic!");
+        window.location.href = "certificate.html";
+
+    }else{
+
+        alert("Topic Completed! Keep practicing to earn your certificate.");
+        window.location.href = "rounds.html";
+
+    }
+
+}
+else{
+
+    window.location.href = "rounds.html";
+
+}// closes if
+
+} // <-- ADD THIS (closes showResult)
+
+function goTopics(){
+
+    window.location.href = "rounds.html";
+
+}
+</script>
+<script src="js/app.js"></script>
+
+
+
+</body>
+</html>

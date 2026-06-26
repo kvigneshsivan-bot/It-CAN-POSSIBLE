@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrainBoost Login</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#f5f7fa;
+}
+
+.container{
+width:400px;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 20px rgba(0,0,0,.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+background:#0A1F44;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+.logo{
+text-align:center;
+margin-bottom:20px;
+}
+
+a{
+text-decoration:none;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="logo">
+<h1>BrainBoost</h1>
+<p>Login to Continue</p>
+</div>
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="loginUser()">
+Login
+</button>
+
+<p style="margin-top:15px;">
+Don't have an account?
+<a href="register.html">Register</a>
+</p>
+
+</div>
+
+<script>
+
+function loginUser(){
+
+let email =
+document.getElementById("email").value.trim();
+
+let password =
+document.getElementById("password").value.trim();
+
+let user =
+JSON.parse(localStorage.getItem("brainboostUser"));
+
+if(email==="" || password===""){
+
+alert("Please enter Email and Password");
+
+return;
+
+}
+
+if(!user){
+alert("Please Register First");
+return;
+}
+
+if(
+email === user.email &&
+password === user.password
+){
+
+localStorage.setItem("loggedIn","true");
+
+alert("✅ Login Successful");
+
+window.location.href="index.html";
+
+}
+else{
+
+alert("Invalid Email or Password");
+
+}
+
+}
+
+</script>
+
+
+</body>
+</html>
