@@ -337,17 +337,6 @@ BrainBoost
 </div>
 
 <script>
-
-const user =
-JSON.parse(localStorage.getItem("brainboostUser")) || {};
-
-const topic =
-localStorage.getItem("completedTopic") || "Number System";
-
-const progress =
-JSON.parse(localStorage.getItem("progress")) || {};
-
-const accuracy =
 progress[topic]?.accuracy || 0;
 
 // ======================
