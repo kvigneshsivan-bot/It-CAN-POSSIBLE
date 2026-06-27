@@ -16,31 +16,46 @@ font-family:Arial,sans-serif;
 
 body{
 background:#f5f7fa;
-padding:20px;
+padding:30px;
 }
 
 .container{
-max-width:700px;
+max-width:800px;
 margin:auto;
 background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
+padding:35px;
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
 }
 
 h1{
+text-align:center;
 color:#0A1F44;
-margin-bottom:20px;
+margin-bottom:30px;
 }
 
 .setting-box{
 margin-bottom:25px;
+padding:20px;
+background:#fafafa;
+border-radius:12px;
+border:1px solid #e5e5e5;
+}
+
+.setting-box h2{
+color:#eaf206;
+margin-bottom:15px;
+}
+
+.setting-box p{
+margin:10px 0;
+font-size:17px;
 }
 
 label{
 display:block;
-margin-bottom:10px;
 font-weight:bold;
+margin-bottom:10px;
 }
 
 input[type="password"]{
@@ -48,6 +63,8 @@ width:100%;
 padding:12px;
 border:1px solid #ccc;
 border-radius:8px;
+margin-bottom:15px;
+font-size:15px;
 }
 
 .switch{
@@ -86,7 +103,7 @@ border-radius:50%;
 }
 
 input:checked + .slider{
-background:#FF6B00;
+background:#eddd26;
 }
 
 input:checked + .slider:before{
@@ -94,17 +111,49 @@ transform:translateX(26px);
 }
 
 .btn{
-background:#FF6B00;
-color:white;
+width:100%;
+padding:12px;
+background:#cecf8b;
+color:rgb(0, 0, 0);
 border:none;
-padding:12px 20px;
 border-radius:8px;
+font-size:16px;
 cursor:pointer;
+transition:.3s;
+margin-top:10px;
+}
+
+.btn:hover{
+background:#0A1F44;
 }
 
 .dark-mode{
 background:#121212;
 color:white;
+}
+
+.dark-mode .container{
+background:#1e1e1e;
+color:white;
+}
+
+.dark-mode .setting-box{
+background:#2a2a2a;
+border:1px solid #444;
+}
+
+.dark-mode input{
+background:#333;
+color:white;
+border:1px solid #555;
+}
+
+.dark-mode h1{
+color:#ffffff;
+}
+
+.dark-mode h2{
+color:#cac00d;
 }
 
 </style>
@@ -116,101 +165,267 @@ color:white;
 <h1>⚙ Settings</h1>
 
 <div class="setting-box">
-<label>Dark Mode</label>
+
+<h2>👤 Account</h2>
+
+<p><strong>Name :</strong> <span id="userName"></span></p>
+
+<p><strong>Email :</strong> <span id="userEmail"></span></p>
+
+</div>
+
+<div class="setting-box">
+
+<label>🌙 Dark Mode</label>
 
 <label class="switch">
+
 <input type="checkbox" id="darkMode">
+
 <span class="slider"></span>
+
 </label>
 
 </div>
 
 <div class="setting-box">
-<label>Notifications</label>
+
+<label>🔔 Notifications</label>
 
 <label class="switch">
-<input type="checkbox" id="notifications" checked>
+
+<input type="checkbox" id="notifications">
+
 <span class="slider"></span>
+
 </label>
 
 </div>
 
 <div class="setting-box">
 
-<label>Change Password</label>
+<label>🔑 Change Password</label>
 
 <input
 type="password"
 id="newPassword"
 placeholder="Enter New Password">
 
+<button class="btn" onclick="saveSettings()">
+Save Password
+</button>
+
 </div>
 
-<button class="btn" onclick="saveSettings()">
-Save Settings
+<div class="setting-box">
+
+<h2>📊 Statistics</h2>
+
+<p>Completed Topics :
+<b id="completedTopics">0</b></p>
+
+<p>Certificates :
+<b id="certificateCount">0</b></p>
+
+<p>Overall Accuracy :
+<b id="overallAccuracy">0%</b></p>
+
+</div>
+
+<div class="setting-box">
+
+<button
+class="btn"
+onclick="resetProgress()">
+
+🗑 Reset Progress
+
 </button>
+
+</div>
+
+<div class="setting-box">
+
+<button
+class="btn"
+onclick="logout()">
+
+🚪 Logout
+
+</button>
+
+</div>
 
 </div>
 
 <script>
 
+// ==========================
+// Load User Details
+// ==========================
+
+const user =
+JSON.parse(localStorage.getItem("brainboostUser")) || {};
+
+document.getElementById("userName").innerText =
+user.name || "Student";
+
+document.getElementById("userEmail").innerText =
+user.email || "No Email";
+
+// ==========================
+// Load Dark Mode
+// ==========================
+
 const darkMode =
 localStorage.getItem("darkMode");
 
-if(darkMode==="true"){
+if(darkMode === "true"){
 
-document.body.classList.add("dark-mode");
+    document.body.classList.add("dark-mode");
 
-document.getElementById("darkMode")
-.checked=true;
+    document.getElementById("darkMode").checked = true;
 
 }
+
+// ==========================
+// Load Notifications
+// ==========================
+
+const notify =
+localStorage.getItem("notifications");
+
+if(notify === "true"){
+
+    document.getElementById("notifications").checked = true;
+
+}
+
+// ==========================
+// Dark Mode Toggle
+// ==========================
 
 document.getElementById("darkMode")
 .addEventListener("change",function(){
 
-if(this.checked){
+    if(this.checked){
 
-document.body.classList.add("dark-mode");
+        document.body.classList.add("dark-mode");
 
-}else{
+    }else{
 
-document.body.classList.remove("dark-mode");
+        document.body.classList.remove("dark-mode");
 
-}
+    }
 
 });
 
-function saveSettings(){
+// ==========================
+// Statistics
+// ==========================
 
-localStorage.setItem(
-"darkMode",
-document.getElementById("darkMode").checked
-);
+const progress =
+JSON.parse(localStorage.getItem("progress")) || {};
 
-localStorage.setItem(
-"notifications",
-document.getElementById("notifications").checked
-);
+let completed = 0;
+let totalAccuracy = 0;
 
-let user =
-JSON.parse(
-localStorage.getItem("brainboostUser")
-) || {};
+for(let topic in progress){
 
-if(document.getElementById("newPassword").value){
+    completed++;
 
-user.password =
-document.getElementById("newPassword").value;
-
-localStorage.setItem(
-"brainboostUser",
-JSON.stringify(user)
-);
+    totalAccuracy += Number(progress[topic].accuracy);
 
 }
 
-alert("✅ Settings Saved");
+document.getElementById("completedTopics").innerText =
+completed + " / 24";
+
+const certificates =
+JSON.parse(localStorage.getItem("certificates")) || [];
+
+document.getElementById("certificateCount").innerText =
+certificates.length;
+
+let avg = 0;
+
+if(completed > 0){
+
+    avg = Math.round(totalAccuracy/completed);
+
+}
+
+document.getElementById("overallAccuracy").innerText =
+avg + "%";
+
+// ==========================
+// Save Settings
+// ==========================
+
+function saveSettings(){
+
+    localStorage.setItem(
+        "darkMode",
+        document.getElementById("darkMode").checked
+    );
+
+    localStorage.setItem(
+        "notifications",
+        document.getElementById("notifications").checked
+    );
+
+    let user =
+    JSON.parse(localStorage.getItem("brainboostUser")) || {};
+
+    if(document.getElementById("newPassword").value){
+
+        user.password =
+        document.getElementById("newPassword").value;
+
+        localStorage.setItem(
+            "brainboostUser",
+            JSON.stringify(user)
+        );
+
+    }
+
+    alert("✅ Settings Saved Successfully");
+
+}
+
+// ==========================
+// Reset Progress
+// ==========================
+
+function resetProgress(){
+
+    if(confirm("Reset all your progress?")){
+
+        localStorage.removeItem("progress");
+
+        localStorage.removeItem("completedTopic");
+
+        localStorage.removeItem("certificates");
+
+        alert("Progress Reset Successfully");
+
+        location.reload();
+
+    }
+
+}
+
+// ==========================
+// Logout
+// ==========================
+
+function logout(){
+
+    localStorage.removeItem("loggedIn");
+
+    alert("Logged Out Successfully");
+
+    window.location.href="login.html";
 
 }
 
