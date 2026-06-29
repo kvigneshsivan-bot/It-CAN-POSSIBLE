@@ -108,6 +108,67 @@ opacity:.9;
 .logout{
 background:#dc3545;
 }
+/* ===========================
+   Responsive Design
+=========================== */
+
+@media (max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+.profile-container{
+
+width:100%;
+padding:20px;
+
+}
+
+h1{
+
+font-size:28px;
+
+}
+
+.profile-pic img{
+
+width:120px;
+height:120px;
+
+}
+
+input{
+
+font-size:16px;
+padding:12px;
+
+}
+
+.stats{
+
+grid-template-columns:1fr;
+gap:15px;
+
+}
+
+.card{
+
+padding:18px;
+
+}
+
+.btn{
+
+width:100%;
+padding:14px;
+font-size:16px;
+
+}
+
+}
 
 </style>
 </head>
@@ -121,7 +182,7 @@ background:#dc3545;
 
 <img
 id="profileImage"
-src="https://via.placeholder.com/150">
+src="images/user.png">
 
 <br>
 
@@ -147,13 +208,7 @@ id="email"
 readonly>
 </div>
 
-<div class="form-group">
-<label>New Password</label>
-<input
-type="password"
-id="password"
-placeholder="Enter new password">
-</div>
+
 
 <button
 class="btn"
@@ -183,25 +238,45 @@ Logout
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+
 <script>
 
-const user =
-JSON.parse(
-localStorage.getItem("brainboostUser")
-) || {};
 
-document.getElementById("name").value =
-user.name || "";
+auth.onAuthStateChanged(function(user){
 
-document.getElementById("email").value =
-user.email || "";
+    if(!user){
+        window.location.href = "login.html";
+        return;
+    }
 
-if(user.image){
+    document.getElementById("email").value = user.email;
 
-document.getElementById("profileImage")
-.src = user.image;
+    db.collection("users")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
 
-}
+        if(doc.exists){
+
+            const data = doc.data();
+
+            document.getElementById("name").value = data.name || "";
+
+            if(data.image){
+                document.getElementById("profileImage").src = data.image;
+            }
+
+        }
+
+    });
+
+});
 
 document.getElementById("uploadImage")
 .addEventListener("change",function(){
@@ -223,69 +298,81 @@ reader.readAsDataURL(file);
 
 function saveProfile(){
 
-let user =
-JSON.parse(localStorage.getItem("brainboostUser")) || {};
+    const user = auth.currentUser;
 
-user.name =
-document.getElementById("name").value.trim();
+    if(!user) return;
 
-user.email =
-document.getElementById("email").value;
+    const name = document.getElementById("name").value.trim();
+    const image = document.getElementById("profileImage").src;
 
-if(document.getElementById("password").value.trim()!=""){
+    db.collection("users")
+    .doc(user.uid)
+    .update({
 
-user.password =
-document.getElementById("password").value.trim();
+        name: name,
+        image: image
 
-}
+    })
+    .then(()=>{
 
-user.image =
-document.getElementById("profileImage").src;
+        alert("✅ Profile Updated Successfully");
 
-localStorage.setItem(
-"brainboostUser",
-JSON.stringify(user)
-);
+    })
+    .catch((error)=>{
 
-alert("✅ Profile Updated Successfully");
+        alert(error.message);
 
-}
-
-let progress =
-JSON.parse(
-localStorage.getItem("progress")
-) || {};
-
-let completed = 0;
-
-for(let topic in progress){
-
-if(progress[topic].currentRound > 10){
-
-completed++;
+    });
 
 }
+auth.onAuthStateChanged(function(user){
 
-}
+    if(!user) return;
 
-document.getElementById("completedTopics").innerText =
-completed;
+    db.collection("progress")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
 
-document.getElementById("certificates").innerText =
-completed;
+        if(!doc.exists) return;
+
+        const progress = doc.data();
+
+        let completed = 0;
+
+        for(let topic in progress){
+
+            if(progress[topic].currentRound > 10){
+
+                completed++;
+
+            }
+
+        }
+
+        document.getElementById("completedTopics").innerText = completed;
+        document.getElementById("certificates").innerText = completed;
+
+    });
+
+});
+
 
 function logout(){
 
-localStorage.removeItem("loggedIn");
+auth.signOut().then(()=>{
 
-window.location.href =
-"login.html";
+window.location.href="login.html";
+
+});
 
 }
 
+
+
 </script>
 
-<script src="js/app.js"></script>
+
 
 
 </body>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Report Bug</title>
+
+<style>
+
+body{
+
+font-family:Arial;
+background:#f5f5f5;
+padding:40px;
+
+}
+
+.container{
+
+max-width:600px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+
+}
+
+textarea{
+
+width:100%;
+height:180px;
+padding:15px;
+font-size:16px;
+margin-top:15px;
+
+}
+
+button{
+
+margin-top:20px;
+padding:12px 25px;
+background:#FF6B00;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🐞 Report a Bug</h2>
+
+<p>
+
+Found any issue?
+
+Describe it below.
+
+</p>
+
+<textarea
+id="bug"
+placeholder="Describe the issue...">
+</textarea>
+
+<button onclick="submitBug()">
+
+Submit Report
+
+</button>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+
+function submitBug(){
+
+const text =
+document.getElementById("bug").value.trim();
+
+if(text==""){
+
+alert("Enter your issue.");
+
+return;
+
+}
+
+const user = auth.currentUser;
+
+db.collection("bugReports")
+.add({
+
+name:user.displayName || user.email,
+
+email:user.email,
+
+message:text,
+
+date:new Date()
+
+})
+
+.then(()=>{
+
+alert("✅ Report Submitted");
+
+window.location.href="index.html";
+
+});
+
+}
+
+</script>
+
+</body>
+
+</html>

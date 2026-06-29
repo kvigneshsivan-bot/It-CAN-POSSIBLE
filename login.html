@@ -71,7 +71,7 @@ text-decoration:none;
 
 <input type="password" id="password" placeholder="Password">
 
-<button onclick="loginUser()">
+<button  id="loginBtn" onclick="loginUser()">
 Login
 </button>
 
@@ -84,16 +84,14 @@ Don't have an account?
 
 <script>
 
-function loginUser(){
+function loginUser() {
+    const btn = document.getElementById("loginBtn");
 
 let email =
 document.getElementById("email").value.trim();
 
 let password =
 document.getElementById("password").value.trim();
-
-let user =
-JSON.parse(localStorage.getItem("brainboostUser"));
 
 if(email==="" || password===""){
 
@@ -102,33 +100,72 @@ alert("Please enter Email and Password");
 return;
 
 }
+btn.disabled = true;
+btn.innerText = "Logging in...";
 
-if(!user){
-alert("Please Register First");
-return;
-}
+auth.signInWithEmailAndPassword(email,password)
 
-if(
-email === user.email &&
-password === user.password
-){
+.then((userCredential)=>{
 
 localStorage.setItem("loggedIn","true");
 
+localStorage.setItem("uid",userCredential.user.uid);
+
 alert("✅ Login Successful");
+btn.disabled = false;
+btn.innerText = "Login";
 
 window.location.href="index.html";
 
-}
-else{
+})
 
-alert("Invalid Email or Password");
+.catch((error)=>{
 
-}
+    btn.disabled = false;
+    btn.innerText = "Login";
 
+    let message = "";
+
+    switch(error.code){
+
+        case "auth/user-not-found":
+            message = "இந்த Email-க்கு Account இல்லை.";
+            break;
+
+        case "auth/wrong-password":
+            message = "Password தவறாக உள்ளது.";
+            break;
+
+        case "auth/invalid-email":
+            message = "சரியான Email முகவரியை உள்ளிடுங்கள்.";
+            break;
+
+        case "auth/network-request-failed":
+            message = "Internet Connection இல்லை.";
+            break;
+
+        case "auth/too-many-requests":
+            message = "அதிக முயற்சிகள். சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்.";
+            break;
+
+        default:
+            message = "Login தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.";
+
+    }
+
+    alert(message);
+
+});
 }
 
 </script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
 
 
 </body>

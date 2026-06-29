@@ -238,6 +238,66 @@ box-shadow:none;
 }
 
 }
+/* ===========================
+   Responsive Design
+=========================== */
+
+@media (max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+.certificate{
+
+width:100%;
+padding:20px;
+
+}
+
+.certificate h1{
+
+font-size:30px;
+
+}
+
+.certificate h2{
+
+font-size:24px;
+
+}
+
+.certificate p{
+
+font-size:15px;
+line-height:1.6;
+
+}
+
+.student-name{
+
+font-size:24px;
+
+}
+
+button{
+
+width:100%;
+margin-top:12px;
+padding:14px;
+font-size:16px;
+
+}
+
+.logo{
+
+width:80px;
+
+}
+
+}
 
 </style>
 </head>
@@ -250,7 +310,7 @@ box-shadow:none;
 </div>
 
 <div class="subtitle">
-ONLINE APTITUDE LEARNING PLATFORM
+ONLINE APTITUDE practice PLATFORM
 </div>
 
 <div class="title">
@@ -326,75 +386,160 @@ BrainBoost
 
 </div>
 
+<div class="buttons">
+
+    <button id="printBtn">
+        🖨 Print Certificate
+    </button>
+
+    <button id="downloadBtn">
+        📄 Download PDF
+    </button>
+
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-
-
-</div>
-
-
-
-</div>
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
 
 <script>
-progress[topic]?.accuracy || 0;
 
-// ======================
-// Student Name
-// ======================
+auth.onAuthStateChanged(function(user){
 
-document.getElementById("studentName").innerText =
-user.name || "Student";
+    if(!user){
 
-// ======================
-// Topic Name
-// ======================
+        window.location.href = "login.html";
+        return;
 
-document.getElementById("topicName").innerText =
-topic;
+    }
 
-// ======================
-// Accuracy
-// ======================
+    const topic = localStorage.getItem("completedTopic");
 
-document.getElementById("accuracy").innerText =
-accuracy + "%";
+    if(!topic){
 
-// ======================
-// Completion Date
-// ======================
+        alert("No completed topic found.");
+        window.location.href = "topics.html";
+        return;
 
-const today = new Date();
+    }
 
-document.getElementById("completionDate").innerText =
-today.toLocaleDateString("en-GB");
+    db.collection("progress")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
 
-// ======================
-// Certificate ID
-// ======================
+        if(!doc.exists){
 
-const certificateId =
-"BB-" +
-today.getFullYear() +
-"-" +
-Math.floor(100000 + Math.random()*900000);
+            alert("Progress not found.");
+            window.location.href = "topics.html";
+            return;
 
-document.getElementById("certificateId").innerText =
-certificateId;
+        }
 
-// ======================
-// Download PDF
-// ======================
+        const progress = doc.data();
 
-document.getElementById("downloadBtn").onclick = function(){
+        if(!progress[topic]){
 
-window.print();
+            alert("Topic progress not found.");
+            window.location.href = "topics.html";
+            return;
+
+        }
+          let total = 0;
+
+let completedRounds = 0;
+
+for(let i=1;i<=10;i++){
+
+    const roundData = progress[topic]?.["round"+i];
+
+    if(roundData){
+
+        total += roundData.accuracy;
+
+        completedRounds++;
+
+    }
+
+}
+
+const accuracy =
+completedRounds > 0
+? Math.round(total/completedRounds)
+: 0;
+
+if(completedRounds < 10){
+
+    alert("Complete all 10 rounds of this topic to unlock the Certificate.");
+
+    localStorage.setItem("selectedTopic", topic);
+
+    window.location.href = "rounds.html";
+
+    return;
+
+}
+
+if(accuracy < 80){
+
+    alert("Your Overall Average Accuracy is " + accuracy + "%. Minimum 80% is required.");
+
+    localStorage.setItem("selectedTopic", topic);
+
+    window.location.href = "rounds.html";
+
+    return;
+
+}
+        // Student Name
+        document.getElementById("studentName").innerText =
+        user.displayName || user.email;
+
+        // Topic
+        document.getElementById("topicName").innerText =
+        topic;
+
+        // Accuracy
+        document.getElementById("accuracy").innerText =
+        accuracy + "%";
+
+        // Date
+        const today = new Date();
+
+        document.getElementById("completionDate").innerText =
+        today.toLocaleDateString("en-GB");
+
+        // Certificate ID
+        const certificateId =
+        "BB-" +
+        today.getFullYear() +
+        "-" +
+        Math.floor(100000 + Math.random()*900000);
+
+        document.getElementById("certificateId").innerText =
+        certificateId;
+
+    });
+
+});
+
+document.getElementById("printBtn").onclick = function () {
+
+    window.print();
+
+};
+
+document.getElementById("downloadBtn").onclick = function () {
+
+    window.print();
 
 };
 
 </script>
 
-<script src="js/app.js"></script>
+
 
 </body>
 

@@ -141,6 +141,101 @@ margin-top:10px;
 .btn:hover{
 opacity:0.9;
 }
+
+/* ===========================
+   Responsive Design
+=========================== */
+
+@media (max-width:768px){
+
+body{
+
+display:block;
+
+}
+
+.sidebar{
+
+width:100%;
+height:auto;
+padding:15px;
+
+}
+
+.menu{
+
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+
+}
+
+.menu a{
+
+margin:5px;
+padding:10px 15px;
+
+}
+
+.main{
+
+padding:15px;
+
+}
+
+.navbar{
+
+flex-direction:column;
+align-items:flex-start;
+gap:15px;
+
+}
+
+.search{
+
+width:100%;
+
+}
+
+.profile{
+
+width:100%;
+justify-content:flex-start;
+
+}
+
+.banner{
+
+padding:20px;
+
+}
+
+.banner h1{
+
+font-size:24px;
+
+}
+
+.cards{
+
+grid-template-columns:1fr;
+
+}
+
+.topic-grid{
+
+grid-template-columns:1fr;
+
+}
+
+.logo img{
+
+width:80px;
+
+}
+
+}
 </style>
 
 
@@ -158,9 +253,12 @@ opacity:0.9;
 <a href="index.html">🏠 Dashboard</a>
 <a href="topics.html">📚 Topics</a>
 <a href="progress.html">📊 Progress</a>
+<a href="leaderboard.html">🥇 Leaderboard</a>
 <a href="certificate.html">🏆 Certificates</a>
 <a href="profile.html">👤 Profile</a>
 <a href="settings.html">⚙ Settings</a>
+<a href="report.html">🐞 Report Bug</a>
+<a href="admin.html" id="adminMenu" style="display:none;">👑 Admin Panel</a>
 </div>
 
 </div>
@@ -169,7 +267,7 @@ opacity:0.9;
 
 <div class="navbar">
 
-<h2>Welcome Vignesh 👋</h2>
+<h2 id="welcomeText">Welcome 👋</h2>
 
 <input
 type="text"
@@ -179,11 +277,14 @@ placeholder="Search Topic..."
 onkeyup="searchTopic()">
 
 <div class="profile">
-    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-         width="40"
-         height="40"
-         alt="User">
-    <span>User</span>
+    <img
+        id="profileImage"
+        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+        width="40"
+        height="40"
+        alt="User">
+
+    <span id="profileName">User</span>
 </div>
 
 </div>
@@ -257,6 +358,22 @@ View Progress
 
 <div class="card">
 
+<h3>🥇 Leaderboard</h3>
+
+<p>
+See the top BrainBoost performers.
+</p>
+
+<button
+class="btn"
+onclick="window.location.href='leaderboard.html'">
+Open Leaderboard
+</button>
+
+</div>
+
+<div class="card">
+
 <h3>🏆 Certificates</h3>
 
 <p>
@@ -273,7 +390,16 @@ Certificates
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
+
 <script>
+
+
 
 function searchTopic(){
 
@@ -281,16 +407,9 @@ function searchTopic(){
 
 }
 
-if(localStorage.getItem("loggedIn")!="true"){
+let progress = {};
 
-    window.location.href="login.html";
-
-}
-
-let progress =
-JSON.parse(localStorage.getItem("progress")) || {};
-
-const totalTopics = 24;
+const totalTopicCount = 24;
 
 let completed = 0;
 
@@ -323,9 +442,54 @@ completed
 ? Math.round(accuracyTotal/completed)+"%"
 : "0%";
 
+auth.onAuthStateChanged(function(user){
+
+if(user){
+
+db.collection("users")
+.doc(user.uid)
+.get()
+
+.then((doc)=>{
+
+if(doc.exists){
+
+
+const data = doc.data();
+ if(user.email === "k.vigneshsivan@gmail.com"){
+
+    document.getElementById("adminMenu").style.display = "block";
+
+}
+
+document.getElementById("welcomeText").innerText =
+"Welcome " + data.name + " 👋";
+
+document.getElementById("profileName").innerText =
+data.name;
+
+if(data.image){
+
+document.getElementById("profileImage").src =
+data.image;
+
+}
+
+}
+
+});
+
+}else{
+
+window.location.href="login.html";
+
+}
+
+});
+
 </script>
 
-<script src="js/app.js"></script>
+
 
 </body>
 </html>

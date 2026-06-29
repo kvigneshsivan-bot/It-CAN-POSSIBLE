@@ -87,6 +87,69 @@ opacity:.9;
 .completed{
 background:green;
 }
+/* ===========================
+   Responsive Design
+=========================== */
+
+@media (max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+h1{
+
+font-size:28px;
+text-align:center;
+
+}
+
+.topic-grid{
+
+grid-template-columns:1fr;
+
+gap:15px;
+
+}
+
+.topic-card{
+
+padding:18px;
+
+}
+
+.topic-card h2{
+
+font-size:22px;
+
+}
+
+.topic-card p{
+
+font-size:15px;
+
+}
+
+.btn{
+
+width:100%;
+padding:12px;
+font-size:16px;
+
+}
+
+.back{
+
+display:block;
+width:100%;
+text-align:center;
+margin-bottom:20px;
+
+}
+
+}
 
 </style>
 
@@ -102,6 +165,12 @@ id="searchTopic"
 placeholder="🔍 Search Topics...">
 
 <div class="topic-grid" id="topicGrid"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
 
 <script>
 
@@ -134,81 +203,97 @@ const topics=[
 
 ];
 
-const progress=
-JSON.parse(localStorage.getItem("progress")) || {};
+const topicGrid = document.getElementById("topicGrid");
 
-const topicGrid=
-document.getElementById("topicGrid");
+auth.onAuthStateChanged(function(user){
 
-topics.forEach(topic=>{
+    if(!user){
 
-let currentRound=1;
+        window.location.href = "login.html";
+        return;
 
-if(progress[topic]){
+    }
 
-currentRound=progress[topic].currentRound || 1;
+    db.collection("progress")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
 
-}
+        let progress = {};
 
-let completedRounds=currentRound-1;
+        if(doc.exists){
 
-if(completedRounds>10){
+            progress = doc.data();
+            
+        }
+        topicGrid.innerHTML = "";
 
-completedRounds=10;
+        topics.forEach(topic=>{
 
-}
+            let currentRound = 1;
 
-let percentage=(completedRounds/10)*100;
+            if(progress[topic]){
 
-let button="";
+                currentRound = progress[topic].currentRound || 1;
 
-if(completedRounds>=10){
+            }
 
-button=`
-<button
-class="btn completed"
-disabled>
-🏆 Completed
-</button>
-`;
+            let completedRounds = currentRound - 1;
 
-}
-else{
+            if(completedRounds > 10){
 
-button=`
-<button
-class="btn"
-onclick="startTopic('${topic}')">
-${completedRounds===0 ? "Start Learning" : "Continue Learning"}
-</button>
-`;
+                completedRounds = 10;
 
-}
+            }
 
-topicGrid.innerHTML+=`
+            let percentage = (completedRounds / 10) * 100;
 
-<div class="topic-card">
+            let button = "";
 
-<h3>${topic}</h3>
+            if(completedRounds >= 10){
 
-<p>Progress : ${percentage}%</p>
+                button = `
+                <button class="btn completed" disabled>
+                🏆 Completed
+                </button>
+                `;
 
-<div class="progress">
+            }else{
 
-<div
-class="progress-bar"
-style="width:${percentage}%">
-</div>
+                button = `
+                <button class="btn"
+                onclick="startTopic('${topic}')">
+                ${completedRounds===0 ? "Start Learning" : "Continue Learning"}
+                </button>
+                `;
 
-</div>
+            }
 
-<p>Rounds : ${completedRounds} / 10</p>
+            topicGrid.innerHTML += `
 
-${button}
+            <div class="topic-card">
 
-</div>
+                <h3>${topic}</h3>
 
-`;
+                <p>Progress : ${percentage}%</p>
+
+                <div class="progress">
+                    <div class="progress-bar"
+                    style="width:${percentage}%">
+                    </div>
+                </div>
+
+                <p>Rounds : ${completedRounds} / 10</p>
+
+                ${button}
+
+            </div>
+
+            `;
+
+        });
+
+    });
 
 });
 
@@ -247,7 +332,7 @@ text.includes(value)
 
 </script>
 
-<script src="js/app.js"></script>
+
 
 </body>
 </html>

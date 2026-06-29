@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -88,6 +89,7 @@ border:2px solid #ddd;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -102,7 +104,7 @@ border:2px solid #ddd;
 <img
 id="preview"
 class="profile-preview"
-src="https://via.placeholder.com/100">
+src="images/user.png">
 
 <input
 type="file"
@@ -129,7 +131,7 @@ type="password"
 id="confirmPassword"
 placeholder="Confirm Password">
 
-<button onclick="registerUser()">
+<button  id ="registerBtn" onclick="registerUser()">
 Create Account
 </button>
 
@@ -168,103 +170,136 @@ reader.readAsDataURL(file);
 
 function registerUser(){
 
-let name =
-document.getElementById("name").value.trim();
+const btn = document.getElementById("registerBtn");
 
-let email =
-document.getElementById("email").value.trim();
+let name=document.getElementById("name").value.trim();
 
-let password =
-document.getElementById("password").value;
+let email=document.getElementById("email").value.trim();
 
-let confirmPassword =
-document.getElementById("confirmPassword").value;
+let password=document.getElementById("password").value;
 
-let profile =
-document.getElementById("preview").src;
+let confirmPassword=document.getElementById("confirmPassword").value;
 
+let profile=document.getElementById("preview").src;
 
-// Check empty fields
 if(name==="" || email==="" || password===""){
 
 alert("Please fill all fields");
+
 return;
 
 }
 
-
-// Email validation
-const emailPattern =
-/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailPattern=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 if(!emailPattern.test(email)){
 
-alert("Enter a valid email address");
+alert("Enter valid email");
+
 return;
 
 }
 
-
-// Password length
-if(password.length < 6){
+if(password.length<6){
 
 alert("Password must contain at least 6 characters");
+
 return;
 
 }
 
-
-// Confirm password
-if(password !== confirmPassword){
+if(password!==confirmPassword){
 
 alert("Passwords do not match");
+
 return;
 
 }
+btn.disabled = true;
+btn.innerText = "Creating Account...";
 
+auth.createUserWithEmailAndPassword(email,password)
 
-// Duplicate email check
-const oldUser =
-JSON.parse(localStorage.getItem("brainboostUser"));
+.then((userCredential)=>{
 
-if(oldUser && oldUser.email === email){
+const user=userCredential.user;
 
-alert("Email already registered");
-return;
+db.collection("users").doc(user.uid).set({
 
-}
-
-
-// Save user
-let user={
+uid:user.uid,
 
 name:name,
+
 email:email,
-password:password,
 
 image:profile,
 
-topicsCompleted:[],
-certificates:[],
-accuracy:0
+role:"user",
 
-};
+createdAt:new Date()
 
-localStorage.setItem(
-"brainboostUser",
-JSON.stringify(user)
-);
+})
 
-alert("Registration Successful");
+.then(()=>{
+
+btn.disabled = false;
+btn.innerText = "Create Account";
+
+alert("🎉 Account Successfully Created!\nஇப்போது Login செய்யுங்கள்.");
 
 window.location.href="login.html";
+
+});
+
+})
+
+.catch((error)=>{
+
+btn.disabled = false;
+btn.innerText = "Create Account";
+
+let message = "";
+
+switch(error.code){
+
+case "auth/email-already-in-use":
+message = "இந்த Email ஏற்கனவே பதிவு செய்யப்பட்டிருக்கிறது.";
+break;
+
+case "auth/invalid-email":
+message = "சரியான Email முகவரியை உள்ளிடுங்கள்.";
+break;
+
+case "auth/weak-password":
+message = "Password குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.";
+break;
+
+case "auth/network-request-failed":
+message = "Internet Connection இல்லை.";
+break;
+
+default:
+message = "Registration தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.";
+
+}
+
+alert(message);
+
+});
 
 }
 
 </script>
 
-<script src="js/app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="js/firebase-config.js"></script>
+
+<script src="js/app.js"></script>
 
 </body>
 </html>

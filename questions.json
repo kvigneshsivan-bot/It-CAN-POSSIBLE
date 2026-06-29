@@ -375,7 +375,7 @@
     "round7": [
   {
     "question": "What is the smallest number which when divided by 8, 9, and 12 leaves remainder 5 in each case?",
-    "options": ["77", "85", "77", "89"],
+    "options": ["77", "85", "64", "89"],
     "answer": "77",
     "explanation": "LCM of 8, 9, 12 = 72, so required number = 72 + 5 = 77."
   },
@@ -429,7 +429,7 @@
   },
   {
     "question": "What is the remainder when 1001 is divided by 13?",
-    "options": ["2", "3", "4", "5"],
+    "options": ["2", "3", "0", "5"],
     "answer": "0",
     "explanation": "1001 ÷ 13 = 77 exactly, so remainder is 0."
   }

@@ -155,6 +155,70 @@ color:#ffffff;
 .dark-mode h2{
 color:#cac00d;
 }
+/* ===========================
+   Responsive Design
+=========================== */
+
+@media (max-width:768px){
+
+body{
+
+padding:15px;
+
+}
+
+.container{
+
+width:100%;
+padding:20px;
+
+}
+
+h1{
+
+font-size:28px;
+
+}
+
+.setting-box{
+
+padding:18px;
+
+}
+
+.setting-box h2{
+
+font-size:22px;
+
+}
+
+.setting-box p{
+
+font-size:15px;
+
+}
+
+.btn{
+
+width:100%;
+padding:14px;
+font-size:16px;
+
+}
+
+.switch{
+
+transform:scale(.9);
+
+}
+
+input[type="password"]{
+
+font-size:16px;
+
+}
+
+}
 
 </style>
 </head>
@@ -204,20 +268,6 @@ color:#cac00d;
 
 <div class="setting-box">
 
-<label>🔑 Change Password</label>
-
-<input
-type="password"
-id="newPassword"
-placeholder="Enter New Password">
-
-<button class="btn" onclick="saveSettings()">
-Save Password
-</button>
-
-</div>
-
-<div class="setting-box">
 
 <h2>📊 Statistics</h2>
 
@@ -257,53 +307,102 @@ onclick="logout()">
 </div>
 
 </div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/app.js"></script>
 
 <script>
 
+auth.onAuthStateChanged(function(user){
+
+    if(!user){
+
+        window.location.href = "login.html";
+        return;
+
+    }
+
+    // ==========================
+    // User Details
+    // ==========================
+
+    document.getElementById("userEmail").innerText = user.email;
+
+    db.collection("users")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
+
+        if(doc.exists){
+
+            const data = doc.data();
+
+            document.getElementById("userName").innerText =
+            data.name || "Student";
+
+        }
+
+    });
+
+    // ==========================
+    // Statistics
+    // ==========================
+
+    db.collection("progress")
+    .doc(user.uid)
+    .get()
+    .then((doc)=>{
+
+        if(!doc.exists) return;
+
+        const progress = doc.data();
+
+        let completed = 0;
+        let certificates = 0;
+        let totalAccuracy = 0;
+
+        for(let topic in progress){
+
+            if(progress[topic].currentRound > 10){
+
+                completed++;
+                certificates++;
+
+            }
+
+            totalAccuracy += Number(progress[topic].accuracy || 0);
+
+        }
+
+        document.getElementById("completedTopics").innerText =
+        completed + " / 24";
+
+        document.getElementById("certificateCount").innerText =
+        certificates;
+
+        document.getElementById("overallAccuracy").innerText =
+        completed > 0
+        ? Math.round(totalAccuracy/completed) + "%"
+        : "0%";
+
+    });
+
+});
+
+
 // ==========================
-// Load User Details
+// Dark Mode
 // ==========================
 
-const user =
-JSON.parse(localStorage.getItem("brainboostUser")) || {};
-
-document.getElementById("userName").innerText =
-user.name || "Student";
-
-document.getElementById("userEmail").innerText =
-user.email || "No Email";
-
-// ==========================
-// Load Dark Mode
-// ==========================
-
-const darkMode =
-localStorage.getItem("darkMode");
-
-if(darkMode === "true"){
+if(localStorage.getItem("darkMode") === "true"){
 
     document.body.classList.add("dark-mode");
-
     document.getElementById("darkMode").checked = true;
 
 }
-
-// ==========================
-// Load Notifications
-// ==========================
-
-const notify =
-localStorage.getItem("notifications");
-
-if(notify === "true"){
-
-    document.getElementById("notifications").checked = true;
-
-}
-
-// ==========================
-// Dark Mode Toggle
-// ==========================
 
 document.getElementById("darkMode")
 .addEventListener("change",function(){
@@ -320,43 +419,17 @@ document.getElementById("darkMode")
 
 });
 
+
 // ==========================
-// Statistics
+// Notifications
 // ==========================
 
-const progress =
-JSON.parse(localStorage.getItem("progress")) || {};
+if(localStorage.getItem("notifications") === "true"){
 
-let completed = 0;
-let totalAccuracy = 0;
-
-for(let topic in progress){
-
-    completed++;
-
-    totalAccuracy += Number(progress[topic].accuracy);
+    document.getElementById("notifications").checked = true;
 
 }
 
-document.getElementById("completedTopics").innerText =
-completed + " / 24";
-
-const certificates =
-JSON.parse(localStorage.getItem("certificates")) || [];
-
-document.getElementById("certificateCount").innerText =
-certificates.length;
-
-let avg = 0;
-
-if(completed > 0){
-
-    avg = Math.round(totalAccuracy/completed);
-
-}
-
-document.getElementById("overallAccuracy").innerText =
-avg + "%";
 
 // ==========================
 // Save Settings
@@ -374,24 +447,10 @@ function saveSettings(){
         document.getElementById("notifications").checked
     );
 
-    let user =
-    JSON.parse(localStorage.getItem("brainboostUser")) || {};
-
-    if(document.getElementById("newPassword").value){
-
-        user.password =
-        document.getElementById("newPassword").value;
-
-        localStorage.setItem(
-            "brainboostUser",
-            JSON.stringify(user)
-        );
-
-    }
-
     alert("✅ Settings Saved Successfully");
 
 }
+
 
 // ==========================
 // Reset Progress
@@ -399,21 +458,25 @@ function saveSettings(){
 
 function resetProgress(){
 
-    if(confirm("Reset all your progress?")){
+    if(!confirm("Reset all your progress?")) return;
 
-        localStorage.removeItem("progress");
+    const user = auth.currentUser;
 
-        localStorage.removeItem("completedTopic");
+    if(!user) return;
 
-        localStorage.removeItem("certificates");
+    db.collection("progress")
+    .doc(user.uid)
+    .set({})
+    .then(()=>{
 
-        alert("Progress Reset Successfully");
+        alert("✅ Progress Reset Successfully");
 
         location.reload();
 
-    }
+    });
 
 }
+
 
 // ==========================
 // Logout
@@ -421,17 +484,17 @@ function resetProgress(){
 
 function logout(){
 
-    localStorage.removeItem("loggedIn");
+    auth.signOut().then(()=>{
 
-    alert("Logged Out Successfully");
+        window.location.href = "login.html";
 
-    window.location.href="login.html";
+    });
 
 }
 
 </script>
 
-<script src="js/app.js"></script>
+
 
 
 </body>
